@@ -1,5 +1,5 @@
 let num = '0';
-let score;
+let score = 0;
 
 const question1 = {
   question: 'вопрос1',
@@ -30,14 +30,26 @@ function showQuestion(obj) {
   return answer;
 }
 
-showQuestion(question2)
-
 function checkAnswer(obj) {
   if (answer === obj.correctAnswer) {
     alert('Верно');
+    score++
   } else {
     alert('Неверно');
   }
 }
 
+showQuestion(question1)
+checkAnswer(question1)
+
+showQuestion(question2)
 checkAnswer(question2)
+
+showQuestion(question3)
+checkAnswer(question3)
+
+showQuestion(question4)
+checkAnswer(question4)
+
+let result = document.getElementById('result');
+result.innerHTML = ('Количество верных ответов: ' + score);
