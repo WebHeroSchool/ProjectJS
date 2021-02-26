@@ -26,7 +26,9 @@ let questionsArray = [question1, question2, question3, question4]
 let answer;
 
 function showQuestion(obj) {
-  answer = prompt(obj.question);
+  let question = document.getElementById('question');
+  question.innerHTML = (obj.question + ' ' + obj.question + ' ' + obj.question + ' ' + obj.question);
+  answer = prompt('Ответьте на ' + obj.question);
   return answer;
 }
 
