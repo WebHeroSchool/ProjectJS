@@ -23,11 +23,18 @@ const question4 = {
 
 let questionsArray = [question1, question2, question3, question4]
 
+let q = [question1.question, question2.question, question3.question, question4.question]
+ 
+function buildQuiz(q) {
+  let question = document.getElementById('question');
+  question.innerHTML = q;
+}
+
+buildQuiz(q)
+
 let answer;
 
 function showQuestion(obj) {
-  let question = document.getElementById('question');
-  question.innerHTML = (obj.question + ' ' + obj.question + ' ' + obj.question + ' ' + obj.question);
   answer = prompt('Ответьте на ' + obj.question);
   return answer;
 }
@@ -55,3 +62,19 @@ checkAnswer(question4)
 
 let result = document.getElementById('result');
 result.innerHTML = ('Количество верных ответов: ' + score);
+
+function showSlide() {
+  console.log('Номер слайда')
+}
+
+const buttonNext = document.getElementById('button-next')
+
+buttonNext.addEventListener('click',(event) => {
+  showSlide();
+})
+
+const buttonPrevious = document.getElementById('button-previous')
+
+buttonPrevious.addEventListener('click',(event) => {
+  showSlide();
+})
