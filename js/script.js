@@ -1,80 +1,149 @@
-let num = '0';
-let score = 0;
-
-const question1 = {
-  question: 'вопрос1',
-  correctAnswer: 'ответ1'
-}
-
-const question2 = {
-  question: 'вопрос2',
-  correctAnswer: 'ответ2'
-}
-
-const question3 = {
-  question: 'вопрос3',
-  correctAnswer: 'ответ3'
-}
-
-const question4 = {
-  question: 'вопрос4',
-  correctAnswer: 'ответ4'
-}
-
-let questionsArray = [question1, question2, question3, question4]
-
-let q = [question1.question, question2.question, question3.question, question4.question]
- 
-function buildQuiz(q) {
-  let question = document.getElementById('question');
-  question.innerHTML = q;
-}
-
-buildQuiz(q)
-
-let answer;
-
-function showQuestion(obj) {
-  answer = prompt('Ответьте на ' + obj.question);
-  return answer;
-}
-
-function checkAnswer(obj) {
-  if (answer === obj.correctAnswer) {
-    alert('Верно');
-    score++
-  } else {
-    alert('Неверно');
+(function() {
+  const myQuestions = [
+  {
+    question: "Где находится статуя Венеры Миллоской?",
+    answers: {
+      a: "возле Триумфальной арки",
+      b: "во дворце бракосочетания",
+      c: "в Лувре"
+    },
+    correctAnswer: "c"
+  },
+  {
+    question: "Найдите пару Дон-Кихоту",
+    answers: {
+      a: "Изольда",
+      b: "Дульсинея",
+      c: "Изабелла"
+    },
+    correctAnswer: "b"
+  },
+  {
+    question: "Настоящее имя Золушки в сказке",
+    answers: {
+      a: "Элиза",
+      b: "Марианна",
+      c: "Эльза",
+    },
+    correctAnswer: "c"
   }
-}
+  ];
 
-showQuestion(question1)
-checkAnswer(question1)
+  function buildQuiz() {
+    const output = [];
 
-showQuestion(question2)
-checkAnswer(question2)
+    myQuestions.forEach((currentQuestion, questionNumber) => {
+      const answers = [];
+      for (letter in currentQuestion.answers) {
+        answers.push(
+          `<label id="answer">
+             <input id="radio" type="radio" name="question${questionNumber}" value="${letter}">
+              ${letter} :
+              ${currentQuestion.answers[letter]}
+           </label>`
+        );
+      }
+      output.push(
+        `<div class="slide">
+           <div class="question"> ${currentQuestion.question} </div>
+           <div class="answers"> ${answers.join("")} </div>
+         </div>`
+      );
+    });
+    quizContainer.innerHTML = output.join("");
+  }
 
-showQuestion(question3)
-checkAnswer(question3)
+  const quizContainer = document.getElementById("quiz");
+  const resultsContainer = document.getElementById("results");
+  const submitButton = document.getElementById("submit");
 
-showQuestion(question4)
-checkAnswer(question4)
+  function showResults() {
+    const answerContainers = quizContainer.querySelectorAll(".answers");
 
-let result = document.getElementById('result');
-result.innerHTML = ('Количество верных ответов: ' + score);
+    let numCorrect = 0;
 
-function showSlide() {
-  console.log('Номер слайда')
-}
+    myQuestions.forEach((currentQuestion, questionNumber) => {
+      const answerContainer = answerContainers[questionNumber];
+      const selector = `input[name=question${questionNumber}]:checked`;
+      const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+      if (userAnswer === currentQuestion.correctAnswer) {
+        numCorrect++;
+        // answerContainers[questionNumber].style.color = "lightgreen";
+      } else {
+        // answerContainers[questionNumber].style.color = "red";
+      }
+    });
 
-const buttonNext = document.getElementById('button-next')
+    resultsContainer.innerHTML = `Ваш результат ${numCorrect} из ${myQuestions.length}`;
+  }
 
-buttonNext.addEventListener('click',(event) => {
-  showSlide();
-})
+  function showSlide(n) {
+    slides[currentSlide].classList.remove("active-slide");
+    slides[n].classList.add("active-slide");
+    currentSlide = n;
+    
+    if (currentSlide === 0) {
+      previousButton.style.display = "none";
+    } else {
+      previousButton.style.display = "inline-block";
+    }
+    
+    if (currentSlide === slides.length - 1) {
+      nextButton.style.display = "none";
+      submitButton.style.display = "inline-block";
+    } else {
+      nextButton.style.display = "inline-block";
+      submitButton.style.display = "none";
+    }
+  }
 
-const buttonPrevious = document.getElementById('button-previous')
+  function showNextSlide() {
+    showSlide(currentSlide + 1);
+  }
 
-buttonPrevious.addEventListener('click',(event) => {
-  showSlide();
-})
+  function showPreviousSlide() {
+    showSlide(currentSlide - 1);
+  }
+
+  buildQuiz();
+
+  const previousButton = document.getElementById("previous");
+  const nextButton = document.getElementById("next");
+  const slides = document.querySelectorAll(".slide");
+  let currentSlide = 0;
+
+  showSlide(0);
+
+  const checkResult = (e) => {
+    const tar = e.target;
+
+    if (tar.tagName === "INPUT") {
+      const questionNumber = tar.name.slice(-1);
+      const userAnswer = tar.value;
+      const isCorrect = myQuestions[questionNumber].correctAnswer === userAnswer;
+      if (isCorrect) {
+        tar.parentNode.style.color = "lightgreen";
+      } else {
+        tar.parentNode.style.color = "red";
+      }
+      const radioButtons = e.currentTarget.querySelectorAll(".answers input");
+      radioButtons.forEach(button => button.setAttribute("disabled", true))
+    }
+  }
+
+  const setAnswerHandlers = () => {
+    const container = quizContainer.querySelectorAll(".slide .answers");
+    container.forEach(answer => {
+      answer.addEventListener("click", checkResult);
+    })
+  }
+
+  setAnswerHandlers();
+
+  submitButton.addEventListener("click", showResults);
+  previousButton.addEventListener("click", showPreviousSlide);
+  nextButton.addEventListener("click", showNextSlide);
+})();
+
+
+
