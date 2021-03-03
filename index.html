@@ -3,14 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, width=device-width">
-  <title>Подключаемый JS</title>
+  <link rel="stylesheet" href="style.css">
+  <title>Quiz</title>
 </head>
 <body>
-  <h1>Вопросы</h1>
-  <p id="question"></p>
-  <button id="button-next">Next</button>
-  <button id="button-previous">Previous</button>
-  <h2 id ="result"></h2>
+  <div class="quiz-conteiner">
+    <div id="quiz"></div>
+  </div>
+  <button id="previous">Previous question</button>
+  <button id="next">Next question</button>
+  <button id="submit">Result</button>
+  <div class="results-conteiner">
+    <div id="results"></div>
+  </div>
   <script src="js/script.js" type="text/javascript"></script>
 </body>
 </html>
