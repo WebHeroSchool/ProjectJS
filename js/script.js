@@ -1,4 +1,15 @@
-(function() {
+let form = document.querySelector('.form');
+let name = form.querySelector('.form-name');
+let nameUser;
+const submitButton = document.getElementById("submit");
+const previousButton = document.getElementById("previous");
+const nextButton = document.getElementById("next");
+
+previousButton.style.display = "none";
+nextButton.style.display = "none";
+submitButton.style.display = "none";
+
+function buildQuizAfterCheck() {
   const myQuestions = [
   {
     question: "Где находится статуя Венеры Миллоской?",
@@ -68,13 +79,10 @@
       const userAnswer = (answerContainer.querySelector(selector) || {}).value;
       if (userAnswer === currentQuestion.correctAnswer) {
         numCorrect++;
-        // answerContainers[questionNumber].style.color = "lightgreen";
-      } else {
-        // answerContainers[questionNumber].style.color = "red";
       }
     });
 
-    resultsContainer.innerHTML = `Ваш результат ${numCorrect} из ${myQuestions.length}`;
+    resultsContainer.innerHTML = nameUser + `, ваш результат ${numCorrect} из ${myQuestions.length}`;
   }
 
   function showSlide(n) {
@@ -143,7 +151,29 @@
   submitButton.addEventListener("click", showResults);
   previousButton.addEventListener("click", showPreviousSlide);
   nextButton.addEventListener("click", showNextSlide);
-})();
+}
 
+form.addEventListener("submit", function (event) {
+  let regex = /^[A-ZА-Я]+[a-zа-я]{2,10}$/;
+  name.classList.remove("error");
 
+  if (!regex.test(name.value)) {
+    event.preventDefault();
+    console.log("error");
+    name.classList.add("error");
 
+    let error = document.createElement("div");
+    error.className = "error-block";
+    error.style.color = "red";
+    error.innerHTML = "Введите ваше имя с заглавной буквы без использования цифр";
+    name.parentElement.insertBefore(error, name);
+  } else {
+    nameUser = regex.exec(name.value);
+    console.log(nameUser);
+    event.preventDefault();
+    form.style.display = "none";
+    buildQuizAfterCheck()
+  }
+})
+
+// let regex = /^[A-Za-z]{2,10}$/;
