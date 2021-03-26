@@ -1,13 +1,19 @@
-let form = document.querySelector('.form');
-let name = form.querySelector('.form-name');
+let form = document.querySelector(".form");
+let name = form.querySelector(".form-name");
 let nameUser;
+let timer;
+let interval;
 const submitButton = document.getElementById("submit");
 const previousButton = document.getElementById("previous");
 const nextButton = document.getElementById("next");
+const restartButton = document.getElementById("restart");
+const countdownContainer = document.getElementById("countdown");
 
 previousButton.style.display = "none";
 nextButton.style.display = "none";
 submitButton.style.display = "none";
+restartButton.style.display = "none";
+countdownContainer.style.display = "none";
 
 function buildQuizAfterCheck() {
   const myQuestions = [
@@ -83,12 +89,46 @@ function buildQuizAfterCheck() {
     });
 
     resultsContainer.innerHTML = nameUser + `, ваш результат ${numCorrect} из ${myQuestions.length}`;
+    restartButton.style.display = "inline-block";
   }
 
   function showSlide(n) {
     slides[currentSlide].classList.remove("active-slide");
     slides[n].classList.add("active-slide");
     currentSlide = n;
+
+    function creationCountdown() {
+      countdownContainer.style.display = "block";
+      let display = document.querySelector("#countdown .display")
+      let timeLeft = "10";
+
+      interval = setInterval(function() {
+        if (--timeLeft >= 0) {
+          display.innerHTML = timeLeft
+        } else {
+          document.querySelector("#countdown h1").style.display = "none";
+          previousButton.style.display = "none";
+          nextButton.style.display = "none";
+          submitButton.style.display = "none";
+          restartButton.style.display = "inline-block";
+          clearInterval(interval);
+          timeLeft = "10";
+        }
+      }, 1000)
+    }
+
+    creationCountdown();
+
+    const buttons = document.querySelectorAll(".answers input");
+    buttons.forEach(button => button.removeAttribute("disabled"));
+
+    function blockQuizOnTimeout() {
+      buttons.forEach(button => button.setAttribute("disabled", true));
+      alert("Ваше время на ответ истекло:(")
+    }
+
+    timer = setTimeout(blockQuizOnTimeout, 10000);
+
     
     if (currentSlide === 0) {
       previousButton.style.display = "none";
@@ -126,6 +166,8 @@ function buildQuizAfterCheck() {
     const tar = e.target;
 
     if (tar.tagName === "INPUT") {
+      clearTimeout(timer);
+      clearInterval(interval);
       const questionNumber = tar.name.slice(-1);
       const userAnswer = tar.value;
       const isCorrect = myQuestions[questionNumber].correctAnswer === userAnswer;
@@ -148,9 +190,14 @@ function buildQuizAfterCheck() {
 
   setAnswerHandlers();
 
+  function reloadLocation() {
+    location.reload();
+  }
+
   submitButton.addEventListener("click", showResults);
   previousButton.addEventListener("click", showPreviousSlide);
   nextButton.addEventListener("click", showNextSlide);
+  restartButton.addEventListener("click", reloadLocation);
 }
 
 form.addEventListener("submit", function (event) {
@@ -169,11 +216,8 @@ form.addEventListener("submit", function (event) {
     name.parentElement.insertBefore(error, name);
   } else {
     nameUser = regex.exec(name.value);
-    console.log(nameUser);
     event.preventDefault();
     form.style.display = "none";
     buildQuizAfterCheck()
   }
 })
-
-// let regex = /^[A-Za-z]{2,10}$/;
